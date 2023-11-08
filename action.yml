@@ -1,0 +1,9 @@
+name: Build Docker Images
+description: Buuid and upload docker images
+
+runs:
+  using: composite
+  steps:
+    - run: |
+        echo 'Hi there!''
+      shell: bash
