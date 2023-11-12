@@ -40,6 +40,22 @@ inputs:
 runs:
   using: composite
   steps:
-    - run: |
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+      with:
+        mask-password: true
+    
+    - name: tag images
+      run: |
         echo 'Hi there!'
+        docker tag ${{ inputs.repository }}/${{ inputs.registry-alias }}:${GITHUB_SHA::6} ${{ steps.login-ecr.outputs.registry }}/${{ inputs.repository }}/${{ inputs.registry-alias }}:${GITHUB_SHA::6}
+        docker images
       shell: bash
+
+    - name: create repo if missing
+      shell: bash
+      run: |
+        aws sts get-caller-id
+        aws ecr describe-repositories --query 'repositories[*].repositoryUri' | jq -r '.[]'
+    
