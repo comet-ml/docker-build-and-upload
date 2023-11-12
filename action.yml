@@ -40,6 +40,11 @@ inputs:
 runs:
   using: composite
   steps:
+
+    - name: show images
+      shell: bash
+      run: docker images
+
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
