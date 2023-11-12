@@ -74,5 +74,5 @@ runs:
     - name: create repo if missing
       shell: bash
       run: |
-        aws ecr describe-repositories --query 'repositories[*].repositoryUri' | jq -r '.[]'
-    
+        REPO_URL=$(aws ecr describe-repositories --query 'repositories[*].repositoryUri' | jq 'map(select(. == "${{ steps.login-ecr.outputs.registry }}/${{ inputs.registry-alias }}/${{ inputs.repository }}"))[]')
+        echo "REPO: -=* ${REPO_URL} *=-"    
