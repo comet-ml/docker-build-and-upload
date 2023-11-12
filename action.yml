@@ -36,6 +36,10 @@ inputs:
     default: ""
     required: false
     description: docker registry
+  build-tag:
+    default: latest
+    required: true
+    description: tag for built image
 
 runs:
   using: composite
@@ -63,7 +67,7 @@ runs:
     - name: tag images
       run: |
         echo 'Hi there!'
-        docker tag ${{ inputs.repository }}/${{ inputs.registry-alias }}:${GITHUB_SHA::6} ${{ steps.login-ecr.outputs.registry }}/${{ inputs.repository }}/${{ inputs.registry-alias }}:${GITHUB_SHA::6}
+        docker tag ${{ inputs.registry-alias }}/${{ inputs.repository }}:${{ inputs.build-tag }} ${{ steps.login-ecr.outputs.registry }}/${{ inputs.registry-alias }}/${{ inputs.repository }}:${{ inputs.build-tag }}
         docker images
       shell: bash
 
