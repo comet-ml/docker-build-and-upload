@@ -1,5 +1,37 @@
 name: Build Docker Images
 description: Buuid and upload docker images
+inputs:
+  registry-alias:
+    default: ${{ github.repository_owner }}
+    required: false
+    description: repository alias
+  repository:
+    default: ${{ github.event.repository.name }}
+    required: false
+    description: repository name
+  extra-tags:
+    required: false
+    description: additional tags for image
+  aws-region:
+    default: "us-east-1"
+    required: false
+    description: aws region
+  role-duration-seconds:
+    default: "900"
+    required: false
+    description: aws role duration
+  role-session-name:
+    default: ${{ vars.ROLE_SESSION_NAME }}
+    required: false
+    description: aws role name to access resources
+  role-skip-session-tagging:
+    default: "false"
+    required: false
+    description: skip role session tagging
+  docker-registry:
+    default: ""
+    required: false
+    description: docker registry
 
 runs:
   using: composite
