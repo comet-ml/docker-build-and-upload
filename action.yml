@@ -45,10 +45,6 @@ runs:
   using: composite
   steps:
 
-    - name: show images
-      shell: bash
-      run: docker images
-
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
@@ -66,9 +62,7 @@ runs:
     
     - name: tag images
       run: |
-        echo 'Hi there!'
         docker tag ${{ inputs.registry-alias }}/${{ inputs.repository }}:${{ inputs.build-tag }} ${{ steps.login-ecr.outputs.registry }}/${{ inputs.registry-alias }}/${{ inputs.repository }}:${{ inputs.build-tag }}
-        docker images
       shell: bash
 
     - name: create repo if missing
@@ -79,4 +73,4 @@ runs:
     - name: push to repo
       shell: bash
       run:
-        docker push --all-tags "${{ steps.login-ecr.outputs.registry }}/${{ inputs.registry-alias }}/${{ inputs.repository }}:${{ inputs.build-tag }}"
+        docker push --all-tags "${{ steps.login-ecr.outputs.registry }}/${{ inputs.registry-alias }}/${{ inputs.repository }}"
