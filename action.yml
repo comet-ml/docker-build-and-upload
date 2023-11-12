@@ -74,5 +74,9 @@ runs:
     - name: create repo if missing
       shell: bash
       run: |
-        REPO_URL=$(aws ecr describe-repositories --query 'repositories[*].repositoryUri' | jq 'map(select(. == "${{ steps.login-ecr.outputs.registry }}/${{ inputs.registry-alias }}/${{ inputs.repository }}"))[]')
-        echo "REPO: -=* ${REPO_URL} *=-"    
+        aws ecr describe-repositories --repository-names ${{ inputs.registry-alias }}/${{ inputs.repository }} || aws ecr create-repository --repository-name ${{ inputs.registry-alias }}/${{ inputs.repository }}
+
+    - name: push to repo
+      shell: bash
+      run:
+        docker push --all-tags "${{ steps.login-ecr.outputs.registry }}/${{ inputs.registry-alias }}/${{ inputs.repository }}:${{ inputs.build-tag }}"
