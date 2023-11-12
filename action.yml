@@ -20,6 +20,10 @@ inputs:
     default: "900"
     required: false
     description: aws role duration
+  role-arn:
+    default: ""
+    required: false
+    description: aws role arn to access ecr
   role-session-name:
     default: ""
     required: false
