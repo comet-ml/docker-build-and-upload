@@ -74,6 +74,5 @@ runs:
     - name: create repo if missing
       shell: bash
       run: |
-        aws sts get-caller-id
         aws ecr describe-repositories --query 'repositories[*].repositoryUri' | jq -r '.[]'
     
