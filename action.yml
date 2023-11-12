@@ -21,7 +21,7 @@ inputs:
     required: false
     description: aws role duration
   role-session-name:
-    default: ${{ vars.ROLE_SESSION_NAME }}
+    default: ""
     required: false
     description: aws role name to access resources
   role-skip-session-tagging:
