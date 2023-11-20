@@ -53,7 +53,7 @@ runs:
           | tee -a $GITHUB_OUTPUT
 
     - name: Configure AWS Credentials
-      if: steps.get-role.outputs.current_role != inputs.role-arn
+      if: ${{ ! steps.get-role.outputs.current_role == inputs.role-arn }}
       uses: aws-actions/configure-aws-credentials@v4
       with:
         role-to-assume: ${{ inputs.role-arn }}
