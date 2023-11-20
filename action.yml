@@ -46,7 +46,7 @@ runs:
   steps:
     - name: Check current role
       id: get-role
-      shaell: bash
+      shell: bash
       run: |
         aws sts get-caller-identity --query Arn --output text \
           | sed -r 's~^(.*):assumed-role/([^/]*)/.*~current_role=\1:role/\2~' \
