@@ -49,15 +49,15 @@ runs:
       shell: bash
       run: |
         aws sts get-caller-identity --query Arn --output text \
-          | sed -r 's~^(.*):assumed-role/([^/]*)/.*~current_role=\1:role/\2~' \
+          | sed -r 's~^(.*):assumed-role/([^/]*)/.*~current_role=\1:role/\2~; s/:sts:/:iam:/' \
           | tee -a $GITHUB_OUTPUT
 
     - name: show vars
       shell: bash
       run: |
         echo "current_role: ${{ steps.get-role.outputs.current_role }}"
-        echo "role_arn: ${{ inputs.role-arn }}"
-        echo "condition: ${{ steps.get-role.outputs.current_role != inputs.role-arn }}"
+        echo "role_arn:     ${{ inputs.role-arn }}"
+        echo "current_role != role-arn: ${{ steps.get-role.outputs.current_role != inputs.role-arn }}"
 
     - name: Configure AWS Credentials
       if: ${{ steps.get-role.outputs.current_role != inputs.role-arn }}
