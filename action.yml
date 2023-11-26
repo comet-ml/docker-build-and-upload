@@ -57,10 +57,10 @@ runs:
       run: |
         echo "current_role: ${{ steps.get-role.outputs.current_role }}"
         echo "role_arn: ${{ inputs.role-arn }}"
-        echo "condition: ${{ ! steps.get-role.outputs.current_role == inputs.role-arn }}"
+        echo "condition: ${{ steps.get-role.outputs.current_role != inputs.role-arn }}"
 
     - name: Configure AWS Credentials
-      if: ${{ ! steps.get-role.outputs.current_role == inputs.role-arn }}
+      if: ${{ steps.get-role.outputs.current_role != inputs.role-arn }}
       uses: aws-actions/configure-aws-credentials@v4
       with:
         role-to-assume: ${{ inputs.role-arn }}
