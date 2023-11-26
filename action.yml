@@ -52,6 +52,13 @@ runs:
           | sed -r 's~^(.*):assumed-role/([^/]*)/.*~current_role=\1:role/\2~' \
           | tee -a $GITHUB_OUTPUT
 
+    - name: show vars
+      shell: bash
+      run: |
+        echo "current_role: ${{ steps.get-role.outputs.current_role }}"
+        echo "role_arn: ${{ inputs.role-arn }}"
+        echo "condition: ${{ ! steps.get-role.outputs.current_role == inputs.role-arn }}"
+
     - name: Configure AWS Credentials
       if: ${{ ! steps.get-role.outputs.current_role == inputs.role-arn }}
       uses: aws-actions/configure-aws-credentials@v4
