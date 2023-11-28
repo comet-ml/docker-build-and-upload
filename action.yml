@@ -86,7 +86,7 @@ runs:
         aws ecr describe-repositories --repository-names ${{ inputs.registry-alias }}/${{ inputs.repository }}
         if [ $? -gt 0 ] ; then
           aws ecr create-repository --repository-name ${{ inputs.registry-alias }}/${{ inputs.repository }}
-          aws ecr put-lifecycle-policy --repository-name ${{ inputs.registry-alias }}/${{ inputs.repository } --lifecycle-policy-text '{"rules":[{"rulePriority":1,"description":"clean untagged","selection":{"tagStatus":"untagged","countType":"sinceImagePushed","countUnit":"days","countNumber":3},"action":{"type":"expire"}},{"rulePriority":2,"description":"clean old","selection":{"tagStatus":"any","countType":"sinceImagePushed","countUnit":"days","countNumber":30},"action":{"type":"expire"}}]}'
+          aws ecr put-lifecycle-policy --repository-name ${{ inputs.registry-alias }}/${{ inputs.repository }} --lifecycle-policy-text '{"rules":[{"rulePriority":1,"description":"clean untagged","selection":{"tagStatus":"untagged","countType":"sinceImagePushed","countUnit":"days","countNumber":3},"action":{"type":"expire"}},{"rulePriority":2,"description":"clean old","selection":{"tagStatus":"any","countType":"sinceImagePushed","countUnit":"days","countNumber":30},"action":{"type":"expire"}}]}'
         fi
 
     - name: push to repo
