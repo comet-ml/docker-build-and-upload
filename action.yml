@@ -96,6 +96,7 @@ runs:
       if: ${{ inputs.docker-registry == 'ECR' }}
       shell: bash
       run: |
+        set +o errexit
         aws ecr describe-repositories --repository-names ${{ inputs.registry-alias }}/${{ inputs.repository }}
         if [ $? -gt 0 ] ; then
           aws ecr create-repository --repository-name ${{ inputs.registry-alias }}/${{ inputs.repository }}
