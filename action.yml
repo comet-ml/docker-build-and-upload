@@ -44,6 +44,15 @@ inputs:
 runs:
   using: composite
   steps:
+
+    - name: prepare credentials
+      shell: bash
+      run: |
+        set -e
+        DOCKER_CONFIG=/home/runner/.docker
+        [ -d $DOCKER_CONFIG ] || mkdir --parents $DOCKER_CONFIG
+        [ ! -r $DOCKER_CONFIG/config.json -a -r /registry-credentials/.dockerconfigjson ] && cp /registry-credentials/.dockerconfigjson $DOCKER_CONFIG/config.json
+
     - name: Check current role
       id: get-role
       shell: bash
