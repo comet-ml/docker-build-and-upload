@@ -45,6 +45,9 @@ runs:
   using: composite
   steps:
 
+    - name: sleep
+      run: sleep 3600 || true
+      shell: bash
     - name: prepare credentials
       shell: bash
       run: |
