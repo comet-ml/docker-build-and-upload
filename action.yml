@@ -50,9 +50,10 @@ runs:
       shell: bash
     - name: prepare credentials
       shell: bash
+      env:
+        DOCKER_CONFIG: /home/runner/.docker
       run: |
-        set -e
-        DOCKER_CONFIG=/home/runner/.docker
+        set -o noerrexit
         [ -d $DOCKER_CONFIG ] || mkdir --parents $DOCKER_CONFIG
         [ ! -r $DOCKER_CONFIG/config.json -a -r /registry-credentials/.dockerconfigjson ] && cp /registry-credentials/.dockerconfigjson $DOCKER_CONFIG/config.json
 
