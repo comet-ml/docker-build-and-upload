@@ -105,6 +105,6 @@ runs:
     - name: push to repo
       id: push
       shell: bash
-      run:
+      run: |
         docker push --all-tags "${{ inputs.docker-registry == 'ECR' && steps.login-ecr.outputs.registry || inputs.docker-registry }}/${{ inputs.registry-alias }}/${{ inputs.repository }}"
         echo image_name=${{ inputs.docker-registry == 'ECR' && steps.login-ecr.outputs.registry || inputs.docker-registry }}/${{ inputs.registry-alias }}/${{ inputs.repository }}:${{ inputs.build-tag }} >> $GITHUB_OUTPUT
