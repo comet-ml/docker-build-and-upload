@@ -40,6 +40,10 @@ inputs:
     default: latest
     required: true
     description: tag for built image
+outputs:
+  image-name:
+    value: ${{ steps.push.outputs.image_name}}
+    description: uploaded image name
 
 runs:
   using: composite
@@ -99,6 +103,8 @@ runs:
         fi
 
     - name: push to repo
+      id: push
       shell: bash
       run:
         docker push --all-tags "${{ inputs.docker-registry == 'ECR' && steps.login-ecr.outputs.registry || inputs.docker-registry }}/${{ inputs.registry-alias }}/${{ inputs.repository }}"
+        echo image_name=${{ inputs.docker-registry == 'ECR' && steps.login-ecr.outputs.registry || inputs.docker-registry }}/${{ inputs.registry-alias }}/${{ inputs.repository }}:${{ inputs.build-tag }} >> $GITHUB_OUTPUT
