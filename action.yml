@@ -50,7 +50,7 @@ runs:
       env:
         DOCKER_CONFIG: /home/runner/.docker
       run: |
-        set +o errexit
+        set +o errexit -o xtrace
         [ -d $DOCKER_CONFIG ] || mkdir --parents $DOCKER_CONFIG
         [ ! -r $DOCKER_CONFIG/config.json -a -r /registry-credentials/.dockerconfigjson ] && cp /registry-credentials/.dockerconfigjson $DOCKER_CONFIG/config.json
 
