@@ -33,7 +33,7 @@ inputs:
     required: false
     description: skip role session tagging
   docker-registry:
-    default: ""
+    default: "ECR"
     required: false
     description: docker registry
   build-tag:
@@ -56,6 +56,7 @@ runs:
         fi
 
     - name: Check current role
+      if: ${{ inputs.docker-registry == 'ECR' }}
       id: get-role
       shell: bash
       run: |
@@ -63,14 +64,8 @@ runs:
           | sed -r 's~^(.*):assumed-role/([^/]*)/.*~current_role=\1:role/\2~; s/:sts:/:iam:/' \
           | tee -a $GITHUB_OUTPUT
 
-    - name: show vars
-      shell: bash
-      run: |
-        echo "current_role: ${{ steps.get-role.outputs.current_role }}"
-        echo "role_arn:     ${{ inputs.role-arn }}"
-        echo "current_role != role-arn: ${{ steps.get-role.outputs.current_role != inputs.role-arn }}"
-
     - name: Configure AWS Credentials
+      if: ${{ inputs.docker-registry == 'ECR' }}
       if: ${{ steps.get-role.outputs.current_role != inputs.role-arn }}
       uses: aws-actions/configure-aws-credentials@v4
       with:
@@ -81,6 +76,7 @@ runs:
         role-duration-seconds: ${{ inputs.role-duration-seconds }}
 
     - name: Login to Amazon ECR
+      if: ${{ inputs.docker-registry == 'ECR' }}
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
       with:
@@ -88,10 +84,13 @@ runs:
 
     - name: tag images
       run: |
-        docker tag ${{ inputs.registry-alias }}/${{ inputs.repository }}:${{ inputs.build-tag }} ${{ steps.login-ecr.outputs.registry }}/${{ inputs.registry-alias }}/${{ inputs.repository }}:${{ inputs.build-tag }}
+        docker tag \
+          ${{ inputs.registry-alias }}/${{ inputs.repository }}:${{ inputs.build-tag }} \
+          ${{ inputs.docker-registry == 'ECR' && steps.login-ecr.outputs.registry || inputs.docker-registry }}/${{ inputs.registry-alias }}/${{ inputs.repository }}:${{ inputs.build-tag }}
       shell: bash
 
     - name: create repo if missing
+      if: ${{ inputs.docker-registry == 'ECR' }}
       shell: bash
       run: |
         aws ecr describe-repositories --repository-names ${{ inputs.registry-alias }}/${{ inputs.repository }}
@@ -103,4 +102,4 @@ runs:
     - name: push to repo
       shell: bash
       run:
-        docker push --all-tags "${{ steps.login-ecr.outputs.registry }}/${{ inputs.registry-alias }}/${{ inputs.repository }}"
+        docker push --all-tags "${{ inputs.docker-registry == 'ECR' && steps.login-ecr.outputs.registry || inputs.docker-registry }}/${{ inputs.registry-alias }}/${{ inputs.repository }}"
