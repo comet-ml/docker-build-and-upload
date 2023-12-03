@@ -93,7 +93,7 @@ runs:
         if [  -n "${DOCKER_REGISTRY}" ] ; then
           DOCKER_REGISTRY="${DOCKER_REGISTRY%/}/"
         fi
-        echo "DOCKER_REGISTRY='${DOCKER_REGISTRY%/}'" >> $GITHUB_ENV
+        echo "DOCKER_REGISTRY=${DOCKER_REGISTRY}" >> $GITHUB_ENV
 
     - name: tag images
       shell: bash
