@@ -85,12 +85,22 @@ runs:
       with:
         mask-password: true
 
+    - name: set env values
+      env:
+        DOCKER_REGISTRY: ${{ inputs.docker-registry == 'ECR' && steps.login-ecr.outputs.registry || inputs.docker-registry }}
+      shell: bash
+      run: |
+        if [  -n "${DOCKER_REGISTRY}" ] ; then
+          DOCKER_REGISTRY="${DOCKER_REGISTRY%/}/"
+        fi
+        echo "DOCKER_REGISTRY='${DOCKER_REGISTRY%/}'" >> $GITHUB_ENV
+
     - name: tag images
+      shell: bash
       run: |
         docker tag \
           ${{ inputs.registry-alias }}/${{ inputs.repository }}:${{ inputs.build-tag }} \
-          ${{ inputs.docker-registry == 'ECR' && steps.login-ecr.outputs.registry || inputs.docker-registry }}/${{ inputs.registry-alias }}/${{ inputs.repository }}:${{ inputs.build-tag }}
-      shell: bash
+          ${DOCKER_REGISTRY%/}/${{ inputs.registry-alias }}/${{ inputs.repository }}:${{ inputs.build-tag }}
 
     - name: create repo if missing
       if: ${{ inputs.docker-registry == 'ECR' }}
@@ -107,5 +117,5 @@ runs:
       id: push
       shell: bash
       run: |
-        docker push --all-tags "${{ inputs.docker-registry == 'ECR' && steps.login-ecr.outputs.registry || inputs.docker-registry }}/${{ inputs.registry-alias }}/${{ inputs.repository }}"
-        echo image_name=${{ inputs.docker-registry == 'ECR' && steps.login-ecr.outputs.registry || inputs.docker-registry }}/${{ inputs.registry-alias }}/${{ inputs.repository }}:${{ inputs.build-tag }} >> $GITHUB_OUTPUT
+        docker push --all-tags "${DOCKER_REGISTRY%/}/${{ inputs.registry-alias }}/${{ inputs.repository }}"
+        echo image_name=${DOCKER_REGISTRY%/}/${{ inputs.registry-alias }}/${{ inputs.repository }}:${{ inputs.build-tag }} >> $GITHUB_OUTPUT
