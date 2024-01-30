@@ -120,9 +120,12 @@ runs:
     - name: tag images
       shell: bash
       run: |
+        set -ex
+        BUILD_TAG=${{ inputs.build-tag }}
+        BUILD_TAG=${BUILD_TAG%%/*}
         docker tag \
-          ${{ inputs.registry-alias }}/${{ inputs.repository }}:${{ inputs.build-tag }} \
-          ${DOCKER_REGISTRY%/}/${{ inputs.registry-alias }}/${{ inputs.repository }}:${{ inputs.build-tag }}
+          ${{ inputs.registry-alias }}/${{ inputs.repository }}:${BUILD_TAG} \
+          ${DOCKER_REGISTRY%/}/${{ inputs.registry-alias }}/${{ inputs.repository }}:${BUILD_TAG}
 
     - name: create repo if missing
       if: ${{ inputs.docker-registry == 'ECR' }}
@@ -141,5 +144,8 @@ runs:
       id: push
       shell: bash
       run: |
+        set -ex
+        BUILD_TAG=${{ inputs.build-tag }}
+        BUILD_TAG=${BUILD_TAG%%/*}
         docker push --all-tags "${DOCKER_REGISTRY%/}/${{ inputs.registry-alias }}/${{ inputs.repository }}"
-        echo image_name=${DOCKER_REGISTRY%/}/${{ inputs.registry-alias }}/${{ inputs.repository }}:${{ inputs.build-tag }} >> $GITHUB_OUTPUT
+        echo image_name=${DOCKER_REGISTRY%/}/${{ inputs.registry-alias }}/${{ inputs.repository }}:${BUILD_TAG} >> $GITHUB_OUTPUT
