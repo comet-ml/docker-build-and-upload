@@ -48,12 +48,24 @@ inputs:
         "rules": [
           {
             "rulePriority": 1,
-            "description": "clean untagged",
+            "description": "Clean untagged images",
             "selection": {
               "tagStatus": "untagged",
               "countType": "sinceImagePushed",
               "countUnit": "days",
               "countNumber": 3
+            },
+            "action": {
+              "type": "expire"
+            }
+          },
+          {
+            "rulePriority": 2,
+            "description": "Keep last 30 images",
+            "selection": {
+              "tagStatus": "any",
+              "countType": "imageCountMoreThan",
+              "countNumber": 30
             },
             "action": {
               "type": "expire"
